@@ -1,0 +1,26 @@
+# Virtual environment
+keras_env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Windows/WSL metadata
+*.Zone.Identifier
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Model artifacts (optional — remove if you want to push your trained model)
+*.h5
+*.keras
+*.pb
+checkpoints/
+
+# Logs
+*.log
