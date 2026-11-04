@@ -85,9 +85,9 @@ x=keras.layers.MaxPool2D()(x)
 
 x = keras.layers.Flatten()(x)
 #FLATTENING OF LAYER
-x = keras.layers.Dense(128,activation="relu")(x)
+x = keras.layers.Dense(128,activation="relu",kernel_regularizer=keras.regularizers.l2(1e-3))(x)
 x = keras.layers.Dropout(0.4)(x)  
-x = keras.layers.Dense(128,activation="relu")(x)
+x = keras.layers.Dense(128,activation="relu",kernel_regularizer=keras.regularizers.l2(1e-3))(x)
 
 output = keras.layers.Dense(10,activation="softmax")(x)
 model = keras.Model(input,output)
