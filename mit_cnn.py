@@ -60,11 +60,16 @@ x_test = np.expand_dims(x_test, -1)
 print(x_train.shape)
 #start of first convulational block
 input = keras.Input(shape=x_train.shape[1:]) #gives info of dimension and channel per example and not no. of example too
-x = keras.layers.RandomZoom(0.2)(input)
+x = keras.layers.RandomFlip("horizontal")(input)
 
-x = keras.layers.Conv2D(32,kernel_size=(3,3),activation="relu",padding="same",name="conv_1")(x)
+x = keras.layers.Conv2D(64,kernel_size=(3,3),activation="relu",
+                        padding="same",
+                        name="conv_1")(x)
+x = keras.layers.BatchNormalization()(x)
+x = keras.layers.Activation("relu")(x)
 #kernel means size of filter,32 is number of filters,activation relu and name conv_1
 x = keras.layers.MaxPool2D()(x) #this is a pooling layer
+
 
 #this ends first convulational block
 
@@ -73,49 +78,27 @@ x = keras.layers.Conv2D(64,                    # Number of filters
                         kernel_size=(3, 3),    # The shape of each filter
                         activation="relu",padding="same",     # RELU activation as usual
                         name="Conv_2")(x)
+x = keras.layers.BatchNormalization()(x)
+x = keras.layers.Activation("relu")(x)
 x=keras.layers.MaxPool2D()(x)
 #this is 2nd cnn block
 
-# x = keras.layers.Conv2D(32,kernel_size=(4, 4),activation="relu",padding="same",
-#                         name="Conv_3")(x)
-# x=keras.layers.MaxPool2D()(x)
-#end of 3rd cnn block
-# x = keras.layers.Conv2D(64,kernel_size=(4, 4),activation="relu",padding="same",
-#                         name="Conv_4")(x)
-# x=keras.layers.MaxPool2D()(x)
-#end of 4th cnn block
-# x = keras.layers.Conv2D(32,kernel_size=(4, 4),activation="relu",padding="same",
-#                         name="Conv_5")(x)
-# x=keras.layers.GlobalAveragePooling2D()(x)
-# x = keras.layers.Dropout(0.25)(x)
-#end of 5th cnn block
-# x = keras.layers.Conv2D(32,kernel_size=(4, 4),activation="relu",padding="same",
-#                         name="Conv_4")(x)
-# x=keras.layers.MaxPool2D()(x)
 x = keras.layers.Flatten()(x)
 #FLATTENING OF LAYER
-x = keras.layers.Dense(64,activation="relu")(x)
-x = keras.layers.Dropout(0.3)(x)  
 x = keras.layers.Dense(128,activation="relu")(x)
-x = keras.layers.Dropout(0.3)(x)  
+x = keras.layers.Dropout(0.4)(x)  
 x = keras.layers.Dense(128,activation="relu")(x)
-
-
-
 
 output = keras.layers.Dense(10,activation="softmax")(x)
 model = keras.Model(input,output)
 model.summary()
 keras.utils.plot_model(model, show_shapes=True)
 
-lr_cb = keras.callbacks.ReduceLROnPlateau(
-    monitor="val_accuracy",
-    mode="max",        # higher is better for accuracy
-    factor=0.5,
-    patience=2,
-    min_delta=0.001,   # needs at least +0.1% to count as improvement
-    min_lr=1e-5,
-)
+callbacks = [
+    keras.callbacks.ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=3, min_lr=1e-5),
+    keras.callbacks.EarlyStopping(monitor="val_loss", patience=6, restore_best_weights=True),
+]
+
 
 model.compile(loss='sparse_categorical_crossentropy',
              optimizer='adam',
@@ -124,9 +107,9 @@ model.compile(loss='sparse_categorical_crossentropy',
 history = model.fit(x_train,
                     y_train,
                     batch_size=64,
-                    epochs=30,
+                    epochs=40,
                     validation_split=0.2,
-                    callbacks=[lr_cb])
+                    callbacks=callbacks)
 plot_loss_curves(history)
 plot_acc_curves(history)
 score = model.evaluate(x_test, y_test)
