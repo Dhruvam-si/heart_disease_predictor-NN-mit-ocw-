@@ -69,6 +69,7 @@ x = keras.layers.BatchNormalization()(x)
 x = keras.layers.Activation("relu")(x)
 #kernel means size of filter,32 is number of filters,activation relu and name conv_1
 x = keras.layers.MaxPool2D()(x) #this is a pooling layer
+x=keras.layers.SpatialDropout2D(0.1)(x)
 
 
 #this ends first convulational block
@@ -81,6 +82,7 @@ x = keras.layers.Conv2D(64,                    # Number of filters
 x = keras.layers.BatchNormalization()(x)
 x = keras.layers.Activation("relu")(x)
 x=keras.layers.MaxPool2D()(x)
+x=keras.layers.SpatialDropout2D(0.1)(x)
 #this is 2nd cnn block
 
 x = keras.layers.Flatten()(x)
@@ -107,7 +109,7 @@ model.compile(loss='sparse_categorical_crossentropy',
 history = model.fit(x_train,
                     y_train,
                     batch_size=64,
-                    epochs=40,
+                    epochs=60,
                     validation_split=0.2,
                     callbacks=callbacks)
 plot_loss_curves(history)
