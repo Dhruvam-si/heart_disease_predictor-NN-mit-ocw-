@@ -7,7 +7,7 @@ Inspired by, and grateful to, Prof. Rama Ramakrishnan's MIT OCW course.
 Projects
 Project	Task	Best result
 Heart Disease Predictor	Binary classification from 29 biomarkers	88% test accuracy
-Fashion-MNIST CNN	10-class image classification	91.75% test accuracy
+Fashion-MNIST CNN	10-class image classification	93.08% test accuracy
 1. Heart Disease Predictor
 
 A small neural network that predicts the presence of heart disease from patient biomarkers.
